@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notfall-Check</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .hidden {
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .progress {
+            height: 10px;
+            background-color: #3498db;
+            width: 0%;
+            border-radius: 5px;
+        }
+        .question-container {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        .recommendation-box {
+            background-color: #eef2f3;
+            border-left: 5px solid #3498db;
+            padding: 10px;
+            margin: 5px 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen">
+            <h1>Willkommen beim Notfall-Check</h1>
+            <p>Finde heraus, wie gut du auf eine Krise vorbereitet bist.</p>
+            <a href="https://www.ernstfallbox.de" target="_blank"><button>ℹ️ Mehr zur Notfallvorsorge</button></a>
+            <button id="startButton">🚀 Test starten</button>
+        </div>
+
+        <!-- Questionnaire -->
+        <div id="quizContainer" class="hidden">
+            <h1>Notfall-Check</h1>
+            <div class="progress-bar">
+                <div id="progress" class="progress"></div>
+            </div>
+            <form id="quizForm">
+                <div id="questions"></div>
+                <button id="backButton" type="button" class="hidden">⬅️ Zurück</button>
+                <button id="nextButton" type="button">Weiter ➡️</button>
+                <button id="submitButton" type="submit" class="hidden">📩 Ergebnis anzeigen</button>
+            </form>
+        </div>
+
+        <!-- Results Page -->
+        <div id="resultPage" class="hidden">
+            <h1>Ergebnis</h1>
+            <div id="result"></div>
+            <p>Basierend auf deinen Antworten empfehlen wir folgende Schritte zur Verbesserung deiner Vorbereitung:</p>
+            <div id="recommendations"></div>
+            <button onclick="window.location.reload();">🔄 Zurück zum Start</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = {{ questions | tojson }};
+        const form = document.getElementById("quizForm");
+        const resultDiv = document.getElementById("result");
+        const recommendationsDiv = document.getElementById("recommendations");
+        const progressBar = document.getElementById("progress");
+
+        const welcomeScreen = document.getElementById("welcomeScreen");
+        const quizContainer = document.getElementById("quizContainer");
+        const resultPage = document.getElementById("resultPage");
+        const startButton = document.getElementById("startButton");
+        const nextButton = document.getElementById("nextButton");
+        const backButton = document.getElementById("backButton");
+        const submitButton = document.getElementById("submitButton");
+
+        let currentStep = 0;
+        const questionsPerStep = 3;
+        let userAnswers = {};
+
+        startButton.addEventListener("click", function() {
+            welcomeScreen.classList.add("hidden");
+            quizContainer.classList.remove("hidden");
+            loadQuestions();
+        });
+
+        function updateProgressBar() {
+            let totalQuestions = Object.values(questions).flat().length;
+            let progress = ((currentStep * questionsPerStep) / totalQuestions) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function loadQuestions() {
+            const questionsDiv = document.getElementById("questions");
+            questionsDiv.innerHTML = "";
+
+            const categories = Object.keys(questions);
+            let displayedQuestions = 0;
+
+            for (const category of categories) {
+                questions[category].forEach((q, index) => {
+                    let globalKey = `${category}-${index}`;
+                    
+                    if (displayedQuestions >= currentStep * questionsPerStep && displayedQuestions < (currentStep + 1) * questionsPerStep) {
+                        let html = `<div class="question-container"><p>${q.question}</p>`;
+                        q.options.forEach(opt => {
+                            let checked = (userAnswers[globalKey] === opt) ? "checked" : "";
+                            html += `<label><input type="radio" name="${globalKey}" value="${opt}" ${checked}> ${opt}</label> `;
+                        });
+                        html += `</div>`;
+                        questionsDiv.innerHTML += html;
+                    }
+                    displayedQuestions++;
+                });
+            }
+
+            updateProgressBar();
+            updateButtons();
+        }
+
+        function updateButtons() {
+            backButton.classList.toggle("hidden", currentStep === 0);
+            if ((currentStep + 1) * questionsPerStep >= Object.values(questions).flat().length) {
+                nextButton.classList.add("hidden");
+                submitButton.classList.remove("hidden");
+            } else {
+                nextButton.classList.remove("hidden");
+                submitButton.classList.add("hidden");
+            }
+        }
+
+        nextButton.addEventListener("click", function() {
+            document.querySelectorAll("input[type='radio']:checked").forEach(input => {
+                userAnswers[input.name] = input.value;
+            });
+
+            if (document.querySelectorAll("input[type='radio']:checked").length < questionsPerStep) {
+                alert("Bitte beantworte alle Fragen, bevor du weitergehst.");
+                return;
+            }
+
+            currentStep++;
+            loadQuestions();
+        });
+
+        backButton.addEventListener("click", function() {
+            currentStep--;
+            loadQuestions();
+        });
+
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();
+            
+            document.querySelectorAll("input[type='radio']:checked").forEach(input => {
+                userAnswers[input.name] = input.value;
+            });
+
+            const formattedAnswers = {};
+            Object.keys(userAnswers).forEach(key => {
+                let [category, index] = key.split("-");
+                if (!formattedAnswers[category]) formattedAnswers[category] = [];
+                formattedAnswers[category][parseInt(index)] = userAnswers[key] || "Ja";
+            });
+
+            const response = await fetch("/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ answers: formattedAnswers })
+            });
+
+            const data = await response.json();
+
+            resultDiv.innerHTML = `<p>✅ Du hast ${data.percentage}% erreicht!</p>`;
+            recommendationsDiv.innerHTML = data.checklist.length > 0 
+                ? data.checklist.map(r => `<div class="recommendation-box">${r}</div>`).join("")
+                : `<p>🎯 Du bist bestens vorbereitet! Schau auf <a href='https://www.ernstfallbox.de' target='_blank'>www.ernstfallbox.de</a> für weitere Inspiration!</p>`;
+
+            quizContainer.classList.add("hidden");
+            resultPage.classList.remove("hidden");
+        });
+
+        loadQuestions();
+    </script>
+</body>
+</html>
