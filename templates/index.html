@@ -67,11 +67,28 @@
     <div class="container">
         <!-- Welcome Screen -->
         <div id="welcomeScreen">
-            <h1>Willkommen beim Notfall-Check</h1>
-            <p>Finde heraus, wie gut du auf eine Krise vorbereitet bist.</p>
-            <a href="https://www.ernstfallbox.de" target="_blank"><button>ℹ️ Mehr zur Notfallvorsorge</button></a>
-            <button id="startButton">🚀 Test starten</button>
+    <h1 style="font-size: 24px; color: #2c3e50;">Willkommen beim Notfall-Check</h1>
+    <p style="font-size: 18px; color: #34495e;">Bist du auf eine Krise vorbereitet? Finde es jetzt heraus!</p>
+
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <!-- Card 1: Start Test -->
+        <div style="background: #ecf0f1; padding: 15px; border-radius: 10px; width: 90%; max-width: 400px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+            <h2 style="font-size: 18px; color: #2c3e50;">🚀 Notfall-Check starten</h2>
+            <p style="font-size: 14px; color: #555;">Gehe den Fragebogen durch, finde deine persönliche Bewertung und erhalte konkrete Empfehlungen.</p>
+            <button id="startButton">🔍 Test starten</button>
         </div>
+
+        <!-- Card 2: More Information -->
+        <div style="background: #ecf0f1; padding: 15px; border-radius: 10px; width: 90%; max-width: 400px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+            <h2 style="font-size: 18px; color: #2c3e50;">ℹ️ Mehr zur Notfallvorsorge</h2>
+            <p style="font-size: 14px; color: #555;">Dieser Test wurde vom Team hinter <strong>Ernstfallbox.de</strong> entwickelt. Informiere dich über Krisenvorsorge und Schutzmaßnahmen.</p>
+            <a href="https://www.ernstfallbox.de" target="_blank">
+                <button>🌍 Mehr erfahren</button>
+            </a>
+        </div>
+    </div>
+</div>
+
 
         <!-- Questionnaire -->
         <div id="quizContainer" class="hidden">

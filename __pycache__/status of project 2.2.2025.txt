@@ -1,0 +1,88 @@
+Preparedness Check App - Project Summary
+Current Status: ✅ Live & Working on Render 🎉
+GitHub Repository: Preparedness-check3
+Deployment Platform: Render (Flask-based web app)
+
+1️⃣ Project Overview
+The Preparedness Check App is a Flask-based web application designed to help users evaluate their emergency preparedness. The app presents 12 questions, grouped into 3 categories, and calculates a preparedness score with personalized recommendations.
+
+Users:
+
+Start the test from a welcome page.
+Answer 3 questions per page in a step-by-step format.
+Receive a percentage-based preparedness score.
+Get specific recommendations based on their answers.
+Can restart the test from the beginning.
+2️⃣ Current Folder Structure
+📂 Project Root Folder (preparedness-check/)
+
+bash
+Copy
+Edit
+/preparedness-check
+│── /templates
+│   ├── index.html     # Frontend (HTML, JavaScript, CSS)
+│── app.py             # Backend (Flask logic)
+│── requirements.txt   # Dependencies for deployment
+app.py: The main Flask backend that processes form submissions, calculates scores, and generates recommendations.
+templates/index.html: The frontend file (includes HTML, CSS, JavaScript).
+requirements.txt: Specifies dependencies needed to run the Flask app.
+3️⃣ Features & Functionalities
+✅ Frontend (index.html)
+
+Start Page with two options:
+"Start Test" (Begins questionnaire)
+"Mehr Informationen" (Links to www.ernstfallbox.de)
+12 Preparedness Questions grouped into 3 categories:
+General Resources
+Survival Resources
+Mental Preparedness
+3 Questions per Page (pagination)
+Progress Bar to indicate completion
+Back & Next Buttons
+Validation (Users must answer all questions before proceeding)
+Results Page
+Displays final score (%-based)
+Personalized recommendations
+Restart button to take the test again
+✅ Backend (app.py)
+
+Uses Flask to:
+Serve the web page (index.html).
+Process submitted answers.
+Calculate preparedness score (based on "Ja" responses).
+Generate personalized recommendations for missing preparedness items.
+✅ Deployment (Render)
+
+Render Web Service hosts the Flask app
+Connected to GitHub
+Start Command:
+nginx
+Copy
+Edit
+gunicorn -w 4 -b 0.0.0.0:10000 app:app
+4️⃣ What Works Well ✅
+Fully functional questionnaire with pagination, progress bar, and score calculation.
+Accurate recommendations based on answers.
+Responsive & Mobile-Friendly (Basic styling in CSS).
+Hosted on Render – accessible as a live web app.
+5️⃣ Outstanding Issues & Next Steps
+🔹 (Optional) Future Features & Fixes
+
+Improve UI Design (Typography, layout adjustments).
+Add Back to Start button inside the questionnaire.
+Allow users to email their results (optional future update).
+Improve deployment stability (automate updates from GitHub).
+6️⃣ How to Continue Development
+To Update the App:
+Make Changes Locally
+Edit app.py or index.html
+Commit & Push to GitHub
+bash
+Copy
+Edit
+git add .
+git commit -m "Updated frontend/backend"
+git push origin main
+Redeploy on Render (It updates automatically after pushing to GitHub!)
+This is the final versioned project status 🚀. If anything breaks, restore this setup as the fallback version. Let me know if you need further refinements!
